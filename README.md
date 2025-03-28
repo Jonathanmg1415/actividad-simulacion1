@@ -24,7 +24,31 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
    
    <details>
    <summary>Answer</summary>
-   Coloque aqui su respuerta
+   2 procesos (PID 0 y PID 1)
+
+   Cada proceso tiene exactamente 5 instrucciones
+
+   El 100% de las instrucciones son de CPU (no hay operaciones de I/O)
+
+   Al ejecutar el comando completo: `python process-run.py -l 5:100,5:100 -c -p` se obtuvo
+
+      ```
+      Time        PID: 0        PID: 1           CPU           IOs
+         1        RUN:cpu         READY             1
+         2        RUN:cpu         READY             1
+         3        RUN:cpu         READY             1
+         4        RUN:cpu         READY             1
+         5        RUN:cpu         READY             1
+         6           DONE       RUN:cpu             1
+         7           DONE       RUN:cpu             1
+         8           DONE       RUN:cpu             1
+         9           DONE       RUN:cpu             1
+      10           DONE       RUN:cpu             1
+
+      Stats: Total Time 10
+      Stats: CPU Busy 10 (100.00%)
+      Stats: IO Busy  0 (0.00%)
+      ```
    </details>
    <br>
 
