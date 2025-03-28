@@ -2,8 +2,8 @@
 
 |Integrante|correo|usuario github|
 |---|---|---|
-|Nombre completo integrante 1|correo integrante 1|gihub user integrante 1|
-|Nombre completo integrante 2|correo integrante 2|gihub user integrante 2|
+|Jonathan Mazo González|jonathan.mazog@udea.edu.co|Jonathanmg1415|
+
 
 ## Instrucciones
 
