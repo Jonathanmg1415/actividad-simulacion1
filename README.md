@@ -56,18 +56,8 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
    
    <details>
    <summary>Answer</summary>
-   **Predicción inicial**  
-   Los parámetros `-l 4:100,1:0` indican:  
-
    - **Proceso 0**: 4 instrucciones (100% CPU - solo operaciones de cálculo).  
    - **Proceso 1**: 1 instrucción (0% CPU - 100% I/O, es decir, solo hace una operación de E/S).  
-
-   **Predicción de tiempo total**: 10 unidades de tiempo.  
-
-   **Razón**:  
-   - El proceso 0 se ejecutará completamente primero (4 unidades de tiempo de CPU).  
-   - El proceso 1 iniciará su operación I/O en el tiempo 5 (que dura 5 unidades de tiempo por defecto).  
-   - La E/S terminará en el tiempo 10 (5+5).  
 
    **Verificación con `-c` y `-p`**  
    Ejecutando: `python process-run.py -l 4:100,1:0 -c -p`  
