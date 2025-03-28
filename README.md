@@ -56,8 +56,10 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
    
    <details>
    <summary>Answer</summary>
-   - **Proceso 0**: 4 instrucciones (100% CPU - solo operaciones de cálculo).  
-   - **Proceso 1**: 1 instrucción (0% CPU - 100% I/O, es decir, solo hace una operación de E/S).  
+
+   **Proceso 0**: 4 instrucciones (100% CPU - solo operaciones de cálculo).<br>  
+  
+   **Proceso 1**: 1 instrucción (0% CPU - 100% I/O, es decir, solo hace una operación de E/S).  
 
    **Verificación con `-c` y `-p`**  
    Ejecutando: `python process-run.py -l 4:100,1:0 -c -p`  
