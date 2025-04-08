@@ -24,7 +24,7 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
 
 # Resultados de Simulaciones de CPU e I/O
 
-```markdown
+
 ## Resultados de Simulaciones de CPU e I/O
 
 ### 1. CPU Utilization with `-l 5:100,5:100`
@@ -205,9 +205,6 @@ python process-run.py -l 3:0,5:100,5:100,5:100 -S SWITCH_ON_IO -c -p -I IO_RUN_I
 
 **Explicación:**
 IO_RUN_IMMEDIATE permite reanudar el proceso inmediatamente después de completar I/O, maximizando la utilización del CPU y reduciendo el tiempo total de ejecución en un 32% respecto a IO_RUN_LATER.
-```
-
-
 
 
 ### Criterios de evaluación
