@@ -20,120 +20,199 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
 
 ### Questions
 
-1. Run `process-run.py` with the following flags: `-l 5:100,5:100`. What should the CPU utilization be (e.g., the percent of time the CPU is in use?) Why do you know this? Use the `-c` and `-p` flags to see if you were right.
-   
-   <details>
-   <summary>Answer</summary>
-   2 procesos (PID 0 y PID 1)
+### CPU Utilization with `-l 5:100,5:100`
 
-   Cada proceso tiene exactamente 5 instrucciones
+# Resultados de Simulaciones de CPU e I/O
 
-   El 100% de las instrucciones son de CPU (no hay operaciones de I/O)
+## 1. Utilización de CPU con `-l 5:100,5:100`
 
-   Al ejecutar el comando completo: `python process-run.py -l 5:100,5:100 -c -p` se obtuvo
+**Comando:**
+```bash
+python process-run.py -l 5:100,5:100 -c -p
+```
 
-      ```
-      Time        PID: 0        PID: 1           CPU           IOs
-         1        RUN:cpu         READY             1
-         2        RUN:cpu         READY             1
-         3        RUN:cpu         READY             1
-         4        RUN:cpu         READY             1
-         5        RUN:cpu         READY             1
-         6           DONE       RUN:cpu             1
-         7           DONE       RUN:cpu             1
-         8           DONE       RUN:cpu             1
-         9           DONE       RUN:cpu             1
-      10           DONE       RUN:cpu             1
+**Salida:**
+```
+Tiempo  PID: 0        PID: 1        CPU        IOs
+  1     RUN:cpu       READY          1
+  2     RUN:cpu       READY          1
+  3     RUN:cpu       READY          1
+  4     RUN:cpu       READY          1
+  5     RUN:cpu       READY          1
+  6     DONE          RUN:cpu        1
+  7     DONE          RUN:cpu        1
+  8     DONE          RUN:cpu        1
+  9     DONE          RUN:cpu        1
+ 10     DONE          RUN:cpu        1
+```
 
-      Stats: Total Time 10
-      Stats: CPU Busy 10 (100.00%)
-      Stats: IO Busy  0 (0.00%)
-      ```
-   </details>
-   <br>
+**Estadísticas:**
+- Tiempo total: 10 ticks
+- CPU ocupado: 10 ticks (100%)
+- I/O ocupado: 0 ticks (0%)
 
-2. Now run with these flags: `./process-run.py -l 4:100,1:0`. These flags specify one process with 4 instructions (all to use the CPU), and one that simply issues an I/O and waits for it to be done. How long does it take to complete both processes? Use `-c` and `-p` to find out if you were right. 
-   
-   <details>
-   <summary>Answer</summary>
+**Explicación:**
+Ambos procesos son intensivos en CPU con 5 instrucciones cada uno. Se ejecutan secuencialmente sin esperas de I/O, logrando una utilización del CPU del 100%.
 
-   **Proceso 0**: 4 instrucciones (100% CPU - solo operaciones de cálculo).<br>  
-  
-   **Proceso 1**: 1 instrucción (0% CPU - 100% I/O, es decir, solo hace una operación de E/S).  
+---
 
-   **Verificación con `-c` y `-p`**  
-   Ejecutando: `python process-run.py -l 4:100,1:0 -c -p`  
+## 2. Carga mixta de CPU e I/O con `-l 4:100,1:0`
 
-   **Resultado obtenido**:  
-   - **Tiempos 1-4**: El proceso 0 ejecuta sus 4 instrucciones de CPU.  
-   - **Tiempo 5**: El proceso 1 inicia su operación I/O y se bloquea.  
-   - **Tiempos 6-10**: El sistema espera a que la E/S termine.  
-   - **Tiempo 11**: La E/S termina y el proceso 1 completa su instrucción `io_done`.  
+**Comando:**
+```bash
+python process-run.py -l 4:100,1:0 -c -p
+```
 
-   **Total**: 11 unidades de tiempo.  
+**Salida:**
+```
+Tiempo  PID: 0        PID: 1        CPU        IOs
+  1     RUN:cpu       READY          1
+  2     RUN:cpu       READY          1
+  3     RUN:cpu       READY          1
+  4     RUN:cpu       READY          1
+  5     DONE          RUN:io         1
+  6     DONE          WAITING                   1
+  7     DONE          WAITING                   1
+  8     DONE          WAITING                   1
+  9     DONE          WAITING                   1
+ 10     DONE          WAITING                   1
+ 11     DONE          RUN:io_done     1
+```
 
-   **Salida esperada**:  
+**Estadísticas:**
+- Tiempo total: 11 ticks
+- CPU ocupado: 6 ticks (54.55%)
+- I/O ocupado: 5 ticks (45.45%)
 
-   ```
-   Time  PID: 0        PID: 1           CPU           IOs
-      1  RUN:cpu       READY               1              
-      2  RUN:cpu       READY               1              
-      3  RUN:cpu       READY               1              
-      4  RUN:cpu       READY               1              
-      5  DONE         RUN:io              1              
-      6  DONE         WAITING                            1
-      7  DONE         WAITING                            1
-      8  DONE         WAITING                            1
-      9  DONE         WAITING                            1
-     10  DONE         WAITING                            1
-     11  DONE         RUN:io_done         1              
+**Explicación:**
+El proceso intensivo en CPU se ejecuta primero. Luego se realiza la operación de I/O que bloquea durante 5 ticks. Esto genera tiempo inactivo del CPU durante la espera.
 
-   Stats: Total Time 11
-   Stats: CPU Busy 6 (54.55%)
-   Stats: IO Busy  5 (45.45%)
-   ```
- </details>
-   <br>
+---
 
-1. Switch the order of the processes: `-l 1:0,4:100`. What happens now? Does switching the order matter? Why? (As always, use `-c` and `-p` to see if you were right)
-   
-   <details>
-   <summary>Answer</summary>
-   Coloque aqui su respuerta
-   </details>
-   <br>
+## 3. Impacto del orden de procesos con `-l 1:0,4:100`
 
-2. We'll now explore some of the other flags. One important flag is `-S`, which determines how the system reacts when a process issues an I/O. With the flag set to SWITCH ON END, the system will NOT switch to another process while one is doing I/O, instead waiting until the process is completely finished. What happens when you run the following two processes (`-l 1:0,4:100 -c -S SWITCH ON END`), one doing I/O and the other doing CPU work?
-   
-   <details>
-   <summary>Answer</summary>
-   Coloque aqui su respuerta
-   </details>
-   <br>
+**Comando:**
+```bash
+python process-run.py -l 1:0,4:100 -c -p
+```
 
-3. Now, run the same processes, but with the switching behavior set to switch to another process whenever one is WAITING for I/O (`-l 1:0,4:100 -c -S SWITCH ON IO`). What happens now? Use `-c` and `-p` to confirm that you are right.
-   
-   <details>
-   <summary>Answer</summary>
-   Coloque aqui su respuerta
-   </details>
-   <br>
+**Salida:**
+```
+Tiempo  PID: 0        PID: 1        CPU        IOs
+  1     RUN:io        READY          1
+  2     BLOCKED       RUN:cpu        1          1
+  3     BLOCKED       RUN:cpu        1          1
+  4     BLOCKED       RUN:cpu        1          1
+  5     BLOCKED       RUN:cpu        1          1
+  6     BLOCKED       DONE                       1
+  7*    RUN:io_done   DONE           1
+```
 
-4. One other important behavior is what to do when an I/O completes. With `-I IO RUN LATER`, when an I/O completes, the process that issued it is not necessarily run right away; rather, whatever was running at the time keeps running. What happens when you run this combination of processes? (`./process-run.py -l 3:0,5:100,5:100,5:100 -S SWITCH ON IO -c -p -I IO RUN LATER`) Are system resources being effectively utilized?
-   
-   <details>
-   <summary>Answer</summary>
-   Coloque aqui su respuerta
-   </details>
-   <br>
+**Estadísticas:**
+- Tiempo total: 7 ticks
+- CPU ocupado: 6 ticks (85.71%)
+- I/O ocupado: 5 ticks (71.43%)
 
-5. Now run the same processes, but with `-I IO RUN IMMEDIATE` set, which immediately runs the process that issued the I/O. How does this behavior differ? Why might running a process that just completed an I/O again be a good idea?
-   
-   <details>
-   <summary>Answer</summary>
-   Coloque aqui su respuerta
-   </details>
-   <br>
+**Explicación:**
+Ejecutar la operación de I/O primero permite que el proceso de CPU se ejecute durante la espera de I/O, mejorando la utilización del CPU y reduciendo el tiempo total.
+
+---
+
+## 4. Comportamiento de I/O con `-S SWITCH ON END`
+
+**Comando:**
+```bash
+python process-run.py -l 1:0,4:100 -c -p -S SWITCH_ON_END
+```
+
+**Salida:**
+```
+Tiempo  PID: 0        PID: 1        CPU        IOs
+  1     RUN:io        READY          1
+  2     BLOCKED       READY                    1
+  3     BLOCKED       READY                    1
+  4     BLOCKED       READY                    1
+  5     BLOCKED       READY                    1
+  6     BLOCKED       READY                    1
+  7*    RUN:io_done   READY          1
+  8     DONE          RUN:cpu        1
+  9     DONE          RUN:cpu        1
+ 10     DONE          RUN:cpu        1
+ 11     DONE          RUN:cpu        1
+```
+
+**Estadísticas:**
+- Tiempo total: 11 ticks
+- CPU ocupado: 6 ticks (54.55%)
+- I/O ocupado: 5 ticks (45.45%)
+
+**Explicación:**
+La política SWITCH_ON_END evita el cambio de proceso durante I/O, resultando en ejecución secuencial y menor utilización del CPU comparado con SWITCH_ON_IO.
+
+---
+
+## 5. Comportamiento de I/O con `-S SWITCH ON IO`
+
+**Comando:**
+```bash
+python process-run.py -l 1:0,4:100 -c -p -S SWITCH_ON_IO
+```
+
+**Salida:**
+```
+Tiempo  PID: 0        PID: 1        CPU        IOs
+  1     RUN:io        READY          1
+  2     BLOCKED       RUN:cpu        1          1
+  3     BLOCKED       RUN:cpu        1          1
+  4     BLOCKED       RUN:cpu        1          1
+  5     BLOCKED       RUN:cpu        1          1
+  6     BLOCKED       DONE                     1
+  7*    RUN:io_done   DONE           1
+```
+
+**Estadísticas:**
+- Tiempo total: 7 ticks
+- CPU ocupado: 6 ticks (85.71%)
+- I/O ocupado: 5 ticks (71.43%)
+
+**Explicación:**
+SWITCH_ON_IO permite cambio de proceso durante espera de I/O, maximizando la utilización del CPU.
+
+---
+
+## 6. Comportamiento al completar I/O con `-I IO RUN LATER`
+
+**Comando:**
+```bash
+python process-run.py -l 3:0,5:100,5:100,5:100 -S SWITCH_ON_IO -c -p -I IO_RUN_LATER
+```
+
+**Estadísticas:**
+- Tiempo total: 31 ticks
+- CPU ocupado: 21 ticks (67.74%)
+- I/O ocupado: 15 ticks (48.39%)
+
+**Explicación:**
+Con IO_RUN_LATER, los procesos que completan I/O no se reanudan inmediatamente, generando tiempo inactivo y menor eficiencia.
+
+---
+
+## 7. Comportamiento al completar I/O con `-I IO RUN IMMEDIATE`
+
+**Comando:**
+```bash
+python process-run.py -l 3:0,5:100,5:100,5:100 -S SWITCH_ON_IO -c -p -I IO_RUN_IMMEDIATE
+```
+
+**Estadísticas:**
+- Tiempo total: 21 ticks
+- CPU ocupado: 21 ticks (100%)
+- I/O ocupado: 15 ticks (71.43%)
+
+**Explicación:**
+IO_RUN_IMMEDIATE permite reanudar el proceso inmediatamente después de completar I/O, maximizando la utilización del CPU y reduciendo el tiempo total de ejecución en un 32% respecto a IO_RUN_LATER.
+
+
 
 
 ### Criterios de evaluación
