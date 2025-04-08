@@ -24,7 +24,7 @@ This program, [`process-run.py`](process-run.py), allows you to see how process 
 
 # Resultados de Simulaciones de CPU e I/O
 
-## 1. Utilización de CPU con `-l 5:100,5:100`
+## 1. Run process-run.py with the following flags: -l 5:100,5:100. What should the CPU utilization be (e.g., the percent of time the CPU is in use?) Why do you know this? Use the -c and -p flags to see if you were right.
 
 **Comando:**
 ```bash
@@ -56,7 +56,7 @@ Ambos procesos son intensivos en CPU con 5 instrucciones cada uno. Se ejecutan s
 
 ---
 
-## 2. Carga mixta de CPU e I/O con `-l 4:100,1:0`
+## 2. Now run with these flags: ./process-run.py -l 4:100,1:0. These flags specify one process with 4 instructions (all to use the CPU), and one that simply issues an I/O and waits for it to be done. How long does it take to complete both processes? Use -c and -p to find out if you were right.
 
 **Comando:**
 ```bash
@@ -89,7 +89,7 @@ El proceso intensivo en CPU se ejecuta primero. Luego se realiza la operación d
 
 ---
 
-## 3. Impacto del orden de procesos con `-l 1:0,4:100`
+## 3. Switch the order of the processes: -l 1:0,4:100. What happens now? Does switching the order matter? Why? (As always, use -c and -p to see if you were right)
 
 **Comando:**
 ```bash
@@ -118,7 +118,7 @@ Ejecutar la operación de I/O primero permite que el proceso de CPU se ejecute d
 
 ---
 
-## 4. Comportamiento de I/O con `-S SWITCH ON END`
+## 4. We'll now explore some of the other flags. One important flag is -S, which determines how the system reacts when a process issues an I/O. With the flag set to SWITCH ON END, the system will NOT switch to another process while one is doing I/O, instead waiting until the process is completely finished. What happens when you run the following two processes (-l 1:0,4:100 -c -S SWITCH ON END), one doing I/O and the other doing CPU work?
 
 **Comando:**
 ```bash
@@ -151,7 +151,7 @@ La política SWITCH_ON_END evita el cambio de proceso durante I/O, resultando en
 
 ---
 
-## 5. Comportamiento de I/O con `-S SWITCH ON IO`
+## 5. Now, run the same processes, but with the switching behavior set to switch to another process whenever one is WAITING for I/O (-l 1:0,4:100 -c -S SWITCH ON IO). What happens now? Use -c and -p to confirm that you are right.
 
 **Comando:**
 ```bash
@@ -180,7 +180,7 @@ SWITCH_ON_IO permite cambio de proceso durante espera de I/O, maximizando la uti
 
 ---
 
-## 6. Comportamiento al completar I/O con `-I IO RUN LATER`
+## 6. One other important behavior is what to do when an I/O completes. With -I IO RUN LATER, when an I/O completes, the process that issued it is not necessarily run right away; rather, whatever was running at the time keeps running. What happens when you run this combination of processes? (./process-run.py -l 3:0,5:100,5:100,5:100 -S SWITCH ON IO -c -p -I IO RUN LATER) Are system resources being effectively utilized?
 
 **Comando:**
 ```bash
@@ -197,7 +197,7 @@ Con IO_RUN_LATER, los procesos que completan I/O no se reanudan inmediatamente, 
 
 ---
 
-## 7. Comportamiento al completar I/O con `-I IO RUN IMMEDIATE`
+## 7. Now run the same processes, but with -I IO RUN IMMEDIATE set, which immediately runs the process that issued the I/O. How does this behavior differ? Why might running a process that just completed an I/O again be a good idea?
 
 **Comando:**
 ```bash
