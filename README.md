@@ -152,7 +152,7 @@ La política SWITCH_ON_END evita el cambio de proceso durante I/O, resultando en
 ---
 
 **5. Now, run the same processes, but with the switching behavior set to switch to another process whenever one is WAITING for I/O (-l 1:0,4:100 -c -S SWITCH ON IO). What happens now? Use -c and -p to confirm that you are right.**
-
+**Nota** Se corrige el comando dado que le faltan los giones bajos, queda asi: SWITCH_ON_IO
 **Comando:**
 ```bash
 python process-run.py -l 1:0,4:100 -c -p -S SWITCH_ON_IO
